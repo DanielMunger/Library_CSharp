@@ -151,6 +151,25 @@ namespace Library.Objects
       cmd.ExecuteNonQuery();
       if (conn != null) conn.Close();
     }
+    public List<Copy> GetCopies()
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+      SqlCommand cmd = new SqlCommand("SELECT * FROM copies WHERE book_id = @BookId;", conn);
+      cmd.Parameters.AddWithValue("@BookId", this.GetId());
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      List<Copy> allCopies = new List<Copy>{};
+      while(rdr.Read())
+      {
+        int copyId = rdr.GetInt32(0);
+        Copy newCopy = new Copy(this.GetId(), copyId);
+        allCopies.Add(newCopy);
+      }
+      if(rdr!=null) rdr.Close();
+      if(conn!=null) conn.Close();
+      return allCopies;
+    }
 //
 // //     public static List<TEMPLATE> Sort()
 // //     {
@@ -185,7 +204,7 @@ namespace Library.Objects
     {
       SqlConnection conn = DB.Connection();
       conn.Open();
-      SqlCommand cmd = new SqlCommand("DELETE FROM books WHERE id = @Id;", conn);
+      SqlCommand cmd = new SqlCommand("DELETE FROM books WHERE id = @Id; DELETE FROM copies WHERE book_id = @Id", conn);
       cmd.Parameters.AddWithValue("@Id", this.GetId());
       cmd.ExecuteNonQuery();
       if(conn!=null) conn.Close();

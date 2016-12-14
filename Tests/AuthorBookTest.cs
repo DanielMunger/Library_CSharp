@@ -29,6 +29,7 @@ namespace Library.Test
 
     public void Dispose()
     {
+      Author.DeleteAll();
       Book.DeleteAll();
     }
 
