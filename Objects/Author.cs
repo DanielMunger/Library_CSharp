@@ -173,20 +173,16 @@ namespace Library.Objects
 //
 //       return allTEMPLATE;
 //     }
-//     public void Delete()
-//     {
-//       SqlConnection conn = DB.Connection();
-//       conn.Open();
-//       SqlCommand cmd = new SqlCommand("DELETE FROM template WHERE id = @TEMPLATEId; DELETE FROM join_table WHERE template_id = @TEMPLATEId", conn);
-//       SqlParameter TEMPLATEIdParameter = new SqlParameter("@TEMPLATEId", this.Id);
-//       cmd.Parameters.Add(TEMPLATEIdParameter);
-//       cmd.ExecuteNonQuery();
-//
-//       if(conn!=null)
-//       {
-//         conn.Close();
-//       }
-//     }
+    public void Delete()
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+      SqlCommand cmd = new SqlCommand("DELETE FROM authors WHERE id = @Id;", conn);
+      cmd.Parameters.AddWithValue("@Id", this.GetId());
+      cmd.ExecuteNonQuery();
+      if(conn!=null) conn.Close();
+    }
+
     public static void DeleteAll()
     {
       SqlConnection conn = DB.Connection();

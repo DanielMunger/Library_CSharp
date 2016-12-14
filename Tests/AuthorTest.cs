@@ -42,6 +42,17 @@ namespace Library.Test
       Author foundAuthor = Author.Find(newAuthor.GetId());
       Assert.Equal(newAuthor,foundAuthor);
     }
+
+    [Fact]
+    public void Delete_RemoveOneAuthorFromDB_0()
+    {
+      Author newAuthor = new Author("Stephen", "King");
+      newAuthor.Save();
+      newAuthor.Delete();
+      List<Author> allAuthors = Author.GetAll();
+      Assert.Equal(0, allAuthors.Count);
+    }
+
     public void Dispose()
     {
       Author.DeleteAll();
