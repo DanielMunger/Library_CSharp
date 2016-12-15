@@ -32,6 +32,35 @@ namespace Library.Test
       //Assert
       Assert.Equal(1, checkoutHistory.Count);
     }
+    [Fact]
+    public void CheckoutHistory_ReturnsHistory_True()
+    {
+      //Arrange
+      Book book1 = new Book("The Old Man and The Sea");
+      Book book2 = new Book("For Whom the Bell Tolls");
+      book1.Save();
+      book2.Save();
+      Author newAuthor = new Author("Ernest", "Hemmingway");
+      newAuthor.Save();
+      book1.AddAuthor(newAuthor.GetId());
+      book2.AddAuthor(newAuthor.GetId());
+
+      Copy copyBook1 = new Copy(book1.GetId());
+      copyBook1.Save();
+      Copy copyBook2 = new Copy(book2.GetId());
+      copyBook2.Save();
+      Patron newPatron = new Patron("Jim", "McDonald");
+      newPatron.Save();
+      //Act
+      copyBook1.Checkout(newPatron.GetId());
+      copyBook2.Checkout(newPatron.GetId());
+      List<Copy> expected = new List<Copy>{copyBook1, copyBook2};
+      List<Copy> result = newPatron.GetHistory();
+      //Assert
+      Assert.Equal(expected, result);
+
+
+    }
 
 
     public void Dispose()
