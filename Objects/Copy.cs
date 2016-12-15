@@ -64,7 +64,35 @@ namespace Library.Objects
       if(rdr!=null) rdr.Close();
       if(conn!=null) conn.Close();
     }
+    public List<Copy> Find(int Id)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
 
+      SqlCommand cmd = new SqlCommand("SELECT * FROM copies WHERE id = @Id;", conn);
+      cmd.Parameters.AddWithValue("@Id", Id);
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      int copyId = 0;
+      int bookId = 0;
+      DateTime? dueDate = null;
+      bool checkedOut = false;
+      List<Copy> foundCopies = new List<Copy>{};
+      while(rdr.Read())
+      {
+        copyId = rdr.GetInt32(0);
+        bookId = rdr.GetInt32(1);
+        dueDate = rdr.GetDateTime(2);
+        checkedOut = rdr.GetBoolean(3);
+      }
+      Copy foundCopy = new Copy(bookId, copyId, dueDate, checkedOut);
+      foundCopies.Add(foundCopy);
+
+      if (rdr != null) rdr.Close();
+      if (conn != null) conn.Close();
+
+      return foundCopies;
+    }
     public void Checkout(int patronId)
     {
       TimeSpan CheckoutLength = new TimeSpan(14, 0, 0, 0);
@@ -120,4 +148,4 @@ namespace Library.Objects
       if(conn!=null) conn.Close();
     }
   }
- }
+}

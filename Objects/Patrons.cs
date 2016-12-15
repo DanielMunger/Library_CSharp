@@ -142,6 +142,28 @@ namespace Library.Objects
       this._lastName = lastName;
       if (conn != null) conn.Close();
     }
+    public List<Copy> GetHistory()
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+      SqlCommand cmd = new SqlCommand("SELECT copies.* FROM patrons JOIN checkouts ON (patrons.id = checkouts.patron_id) JOIN copies ON(checkouts.copy_id = copies.id) WHERE patrons.id = @PatronId;", conn);
+      cmd.Parameters.AddWithValue("@PatronId", this.GetId());
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      List<Copy> checkoutHistory = new List<Copy>{};
+      while(rdr.Read())
+      {
+        int copyId = rdr.GetInt32(0);
+        int bookId = rdr.GetInt32(1);
+        DateTime? dueDate = rdr.GetDateTime(2);
+        bool checkedOut = rdr.GetBoolean(3);
+        Copy newCopy = new Copy(bookId, copyId, dueDate, checkedOut);
+        checkoutHistory.Add(newCopy);
+      }
+      if(rdr!=null) rdr.Close();
+      if(conn!=null) conn.Close();
+      return checkoutHistory;
+    }
 
     public void Delete()
     {
