@@ -164,6 +164,26 @@ namespace Library.Objects
       if(conn!=null) conn.Close();
       return checkoutHistory;
     }
+    public int GetDueDate(int copyId)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+      SqlCommand cmd = new SqlCommand("SELECT * FROM copies WHERE id = @CopyId;", conn);
+      cmd.Parameters.AddWithValue("@CopyId", copyId);
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      int CopyId = 0;
+      // int bookId = 0;
+      // DateTime dueDate;
+      // bool checkedOut;
+      while(rdr.Read());
+      {
+        CopyId = rdr.GetInt32(0);
+      }
+      if(rdr!=null) rdr.Close();
+      if(conn!=null) conn.Close();
+      return CopyId;
+    }
 
     public void Delete()
     {
