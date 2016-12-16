@@ -47,6 +47,27 @@ namespace Library.Test
       int result = newBook.GetCopies().Count;
       Assert.Equal(0, result);
     }
+    [Fact]
+    public void GetOverDueBooks_ReturnsOverdueBooks_True()
+    {
+      Book book1 = new Book("The Old Man and the Sea");
+      book1.Save();
+      Book book2 = new Book("Monkey Wrench Gang");
+      book2.Save();
+      Copy copyBook1 = new Copy(book1.GetId());
+      copyBook1.Save();
+      Copy copyBook2 = new Copy(book2.GetId());
+      copyBook2.Save();
+      Patron newPatron = new Patron("Daniel", "Munger");
+      newPatron.Save();
+      //Act
+      copyBook1.Checkout(newPatron.GetId());
+      copyBook2.Checkout(newPatron.GetId());
+      List<Copy> overdueBooks = Copy.GetOverDueBooks();
+      List<Copy> expected = new List<Copy> {copyBook1, copyBook2};
+
+      Assert.Equal(expected, overdueBooks);
+    }
 
     public void Dispose()
     {

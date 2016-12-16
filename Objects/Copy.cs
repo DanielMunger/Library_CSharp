@@ -95,7 +95,7 @@ namespace Library.Objects
     }
     public void Checkout(int patronId)
     {
-      TimeSpan CheckoutLength = new TimeSpan(14, 0, 0, 0);
+      TimeSpan CheckoutLength = new TimeSpan(0, 0, 0, 1);
       SqlConnection conn = DB.Connection();
       conn.Open();
       SqlCommand cmd = new SqlCommand("INSERT INTO checkouts (copy_id, patron_id) VALUES (@copyId, @PatronId);", conn);
@@ -130,6 +130,32 @@ namespace Library.Objects
     //   return inventory;
     // }
 
+    public static List<Copy> GetOverDueBooks()
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+      SqlCommand cmd = new SqlCommand("SELECT * FROM copies WHERE checked_out = 'true';", conn);
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      List<Copy> allCopies = new List<Copy>{};
+      DateTime compare = DateTime.Today;
+      while(rdr.Read())
+      {
+        int CopyId = rdr.GetInt32(0);
+        int BookId = rdr.GetInt32(1);
+        DateTime dueDate = rdr.GetDateTime(2);
+        bool checkedOut = rdr.GetBoolean(3);
+        int result = DateTime.Compare(compare, dueDate);
+        if(result < 0)
+        {
+          Copy newCopy = new Copy(BookId, CopyId, dueDate, checkedOut);
+          allCopies.Add(newCopy);
+        }
+      }
+      if(rdr!=null) rdr.Close();
+      if(conn!=null) conn.Close();
+      return allCopies;
+    }
     public void Delete()
     {
       SqlConnection conn = DB.Connection();
